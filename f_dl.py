@@ -70,5 +70,11 @@ if(cf['Drive']['onedrive'] == "1"):
     print('-> Uploading to OneDrive...')
     pushToOneDrive('downloaded/' + FILE_NAME, REMOTE_NAME, ONEDRIVE_PATH)
 
-print("-> Done! Removing downloaded file...")
-removeFile('downloaded/' + FILE_NAME)
+#print("-> Done! Removing downloaded file...")
+#removeFile('downloaded/' + FILE_NAME)
+
+import os
+cmd = "mv -v downloaded/'" + FILE_NAME + "' /content/drive/MyDrive"
+print(cmd)
+with os.popen(cmd) as f:
+    print(f.readlines())
