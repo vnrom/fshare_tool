@@ -4,7 +4,7 @@ import requests, configparser, sys
 def exit(err):
     sys.exit(err)
 
-def myParser(path = 'config.ini'):
+def myParser(path = '/content/fshare_tool/config.ini'):
     ps = configparser.ConfigParser()
     ps.read(path)
     return ps
@@ -35,7 +35,7 @@ def requestToJson(self):
     import json
     return json.loads(json.dumps(self.json()))
 
-def chunk_download(furl, name, folder = 'downloaded/'):
+def chunk_download(furl, name, folder = '/content/fshare_tool/downloaded/'):
     import math, enlighten
     url = furl
     fname = name
