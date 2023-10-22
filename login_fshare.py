@@ -6,11 +6,8 @@
 import configparser, requests, sys, json
 from function import *
 
-
 ps = myParser()
 cf = toDict(ps)
-# cf = configparser.ConfigParser()
-# cf.read("/content/fshare_tool/config.ini")
 
 # get data from config
 USER_API_URL = cf['API']['user_api_url']
