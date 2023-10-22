@@ -53,28 +53,8 @@ print("| File Info |")
 print("└───────────┘")
 print("+-------------+------------------------------------+")
 print("-> File Name:", FILE_NAME)
-print("-> Save Folder: /downloaded")
+print("-> Save Folder: /content/drive/MyDrive")
 
 chunk_download(DL_URL, FILE_NAME)
 print("+--------------------------------------------------+")
-print("-> Done! Starting upload to Drive...")
-
-if(cf['Drive']['gdrive'] == "1"):
-    DRIVE_FOLDER = cf['Drive']['folder_id']
-    print('-> Uploading to Google Drive...')
-    pushToDrive('downloaded/' + FILE_NAME, DRIVE_FOLDER)
-
-if(cf['Drive']['onedrive'] == "1"):
-    REMOTE_NAME = cf['Drive']['rclone_remote_name']
-    ONEDRIVE_PATH = cf['Drive']['onedrive_folder_path']
-    print('-> Uploading to OneDrive...')
-    pushToOneDrive('downloaded/' + FILE_NAME, REMOTE_NAME, ONEDRIVE_PATH)
-
-#print("-> Done! Removing downloaded file...")
-#removeFile('downloaded/' + FILE_NAME)
-
-import os
-cmd = "mv -v downloaded/'" + FILE_NAME + "' /content/drive/MyDrive"
-print(cmd)
-with os.popen(cmd) as f:
-    print(f.readlines())
+print("-> Done! Downloaded to Drive...")
