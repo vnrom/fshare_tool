@@ -3,58 +3,50 @@
 #
 # 2022 (c) levandat
 #
-# f_dl.py <File URL> [File Password]
-import requests, configparser, json, sys, urllib
+import configparser, requests, sys, json
 from function import *
-from urllib.parse import unquote
 
-FILE_PASSWORD = ''
-if len(sys.argv) == 1:
-    exit("-> Please include file URL")
-elif len(sys.argv) == 3:
-    FILE_PASSWORD == sys.argv[2]
-FILE_URL = sys.argv[1]
 
 ps = myParser()
 cf = toDict(ps)
+# cf = configparser.ConfigParser()
+# cf.read("/content/fshare_tool/config.ini")
 
 # get data from config
-FILE_DL_API_URL = cf['API']['file_dl_api_url']
+USER_API_URL = cf['API']['user_api_url']
+MAIL = cf['Auth']['mail']
+PASSWORD = cf['Auth']['password']
 USER_AGENT = cf['Auth']['user_agent']
 APP_KEY = cf['Auth']['app_key']
-SESSION_ID = cf['Login']['session_id']
-TOKEN = cf['Login']['token']
 
-if(SESSION_ID == '' or TOKEN == ''):
-    exit("-> Please login first!")
+if(MAIL == '' or PASSWORD == '' or USER_AGENT == '' or APP_KEY == ''):
+  exit("-> Please fill all Auth fields in config.ini!")
 
-print("-> Connecting to Fshare...")
+print("-> Connecting to Fshare... ")
 
-header = {"Content-Type": "application/json", "accept": "application/json", "User-Agent": USER_AGENT, "Cookie": "session_id=" + SESSION_ID}
+# api-endpoint (using Fshare API V2)
+URL = USER_API_URL + "/login"
+header = {"Content-Type": "application/json", "accept": "application/json", "User-Agent": USER_AGENT}
 Data = {
-  "url": FILE_URL,
-  "password": FILE_PASSWORD,
-  "token": TOKEN,
-  "zipflag": 0
+  "user_email": MAIL,
+  "password": PASSWORD,
+  "app_key": APP_KEY
 }
 
-r = rq_fshare(URL = FILE_DL_API_URL, header = header, Data = Data)
+r = rq_fshare(URL = URL, header = header, Data = Data)
 
-if r.status_code != 200:
-    exit(errorInfo(r.status_code))
+sc = r.status_code
+if sc != 200:
+  exit(errorInfo(sc))
 
-j = requestToJson(r)
+d = requestToJson(r)
+token = d["token"]
+ssid = d["session_id"]
 
-DL_URL = j['location']
-FILE_NAME = unquote(DL_URL.split('/')[-1])
+ps.set('Login', 'SESSION_ID', ssid)
+ps.set('Login', 'TOKEN', token)
 
-print("┌───────────┐")
-print("| File Info |")
-print("└───────────┘")
-print("+-------------+------------------------------------+")
-print("-> File Name:", FILE_NAME)
-print("-> Save Folder: /content/drive/MyDrive")
-
-chunk_download(DL_URL, FILE_NAME)
-print("+--------------------------------------------------+")
-print("-> Done! Downloaded to Drive...")
+with open('/content/fshare_tool/config.ini', 'w') as f:
+  ps.write(f)
+  
+print("-> Done!")
