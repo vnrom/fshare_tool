@@ -56,5 +56,11 @@ print("-> File Name:", FILE_NAME)
 print("-> Save Folder: /content/drive/MyDrive")
 
 chunk_download(DL_URL, FILE_NAME)
+
+import os
+cmd = "mv -v fshare_tool/downloaded/'" + FILE_NAME + "' /content/drive/MyDrive"
+print(cmd)
+with os.popen(cmd) as f:
+    print(f.readlines())
 print("+--------------------------------------------------+")
 print("-> Done! Downloaded to Drive...")
